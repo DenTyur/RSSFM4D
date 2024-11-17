@@ -1,0 +1,13 @@
+=========================
+---------- RUN ----------
+=========================
+STEP 0/5  time_step = 7.57546  total_time = 8.08747
+t.current=2.00000, norm = 0.9999844405754017
+STEP 1/5  time_step = 7.59949  total_time = 16.29698
+t.current=4.00000, norm = 0.999974677021983
+STEP 2/5  time_step = 7.51638  total_time = 24.44043
+t.current=6.00000, norm = 0.9999652884317639
+STEP 3/5  time_step = 7.73229  total_time = 32.77837
+t.current=8.00000, norm = 0.9999560781581508
+STEP 4/5  time_step = 7.71695  total_time = 41.09771
+t.current=10.00000, norm = 0.9999458484676782

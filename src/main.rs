@@ -10,10 +10,13 @@ use evolution::{time_step_evol, FftMaker4d};
 use field::Field4D;
 use parameters::{Pspace, Tspace, Xspace};
 use potentials::AtomicPotential;
+use std::fs::File;
+use std::fs::OpenOptions;
+use std::io::{BufRead, BufReader, Error, Write};
 use std::time::Instant;
 use wave_function::WaveFunction;
 
-fn main() {
+fn main() -> Result<(), Error> {
     catalogs_check();
     // пути к сохраненным массивам
     let x_dir_path = "arrays_saved";
@@ -21,7 +24,7 @@ fn main() {
     let psi_path = "arrays_saved/psi_initial.npy";
 
     // задаем параметры временной сетки
-    let mut t = Tspace::new(0., 0.2, 50, 5);
+    let mut t = Tspace::new(0., 0.2, 10, 5);
     t.save_grid("arrays_saved/time_evol/t.npy").unwrap();
 
     // задаем координатную сетку
@@ -47,6 +50,19 @@ fn main() {
     // планировщик fft
     let mut fft = FftMaker4d::new(&x.n);
 
+    // файл для сохранения сообщений
+    let path = "main_out.txt";
+    let mut output = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(path)
+        .unwrap();
+
+    write!(output, "=========================\n")?;
+    write!(output, "---------- RUN ----------\n")?;
+    write!(output, "=========================\n")?;
+
     let total_time = Instant::now();
     for i in 0..t.nt {
         // сохранение временного среза волновой функции
@@ -71,7 +87,22 @@ fn main() {
             total_time.elapsed().as_secs_f32()
         );
         println!("t.current={:.5}, norm = {}", t.current, psi.norm());
+        write!(
+            output,
+            "STEP {}/{}  time_step = {:.5}  total_time = {:.5}\n",
+            i,
+            t.nt,
+            time.elapsed().as_secs_f32(),
+            total_time.elapsed().as_secs_f32()
+        )?;
+        write!(
+            output,
+            "t.current={:.5}, norm = {}\n",
+            t.current,
+            psi.norm()
+        )?;
     }
+    Ok(())
 }
 
 fn catalogs_check() {
